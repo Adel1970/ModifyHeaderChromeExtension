@@ -4,19 +4,26 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Modify Hays' Headers </title>
-    <script src="jquery-3.2.1.js"></script>
+    <script src="jquery-3.3.1.js"></script>
+    <script src="eventPage.js"></script>
     <script src="popup.js"></script>
 </head>
 <body>
     <h1 id="greeting">Modify Hays' Headers</h1>
-    <input id="name" type="text" placeholder="name"/>
-    <input id="value" type="text" placeholder="value"/>
- <!--   <button type="submit"> add header </button>-->
-    <button id = "blockGoogle" type ="submit"> BLOCK GOOGLE</button>
-        <table>
-            <tr>
-
-            </tr>
-        </table>
+    <input id="addName" type="text" placeholder="name"/><br>
+    <input id="addValue" type="text" placeholder="value"/><br>
+    <button id = "addHeader" type ="submit">add header</button><br>
+    <table id = "headerTable">
+        <th>name</th>
+        <th>value</th>
+        <tr>
+            <td class="nameClass" id = "name"></td>
+            <td class="valueClass" id = "value"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
 </body>
 </html>

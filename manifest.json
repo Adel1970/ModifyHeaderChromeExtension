@@ -16,7 +16,6 @@
         "storage", 
         "webRequest", 
         "webRequestBlocking", 
-        "*://www.hays.de/*",
-        "http://*.google.com/"
+        "<all_urls>"
     ]
 }
