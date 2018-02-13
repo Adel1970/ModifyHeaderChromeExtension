@@ -9,7 +9,7 @@
     }, 
     "options_page":"options.html", 
     "background": {
-        "scripts":["eventPage.js"], 
+        "scripts":["jquery-3.3.1.js","eventPage.js"], 
         "persistent":true
     }, 
     "permissions":[
