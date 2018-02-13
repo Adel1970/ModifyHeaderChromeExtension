@@ -14,16 +14,18 @@
     <input id="addValue" type="text" placeholder="value"/><br>
     <button id = "addHeader" type ="submit">add header</button><br>
     <table id = "headerTable">
-        <th>name</th>
-        <th>value</th>
+        <thead>
+            <tr>
+                <td>name</td><td>value</td>
+            </tr>       
+        </thead>
+        <tbody>
         <tr>
             <td class="nameClass" id = "name"></td>
             <td class="valueClass" id = "value"></td>
-        </tr><button id="enable">enable</button>
-        <tr>
-            <td></td>
-            <td></td>
+            <td><button id="enable">enable</button></td>
         </tr>
+        </tbody>
     </table>
 </body>
 </html>
