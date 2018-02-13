@@ -3,14 +3,20 @@ $(function () {
         $('#name').html(items.name); 
         $('#value').html(items.value); 
     }); 
+  
     $('#addHeader').click(function () {
         // chrome.storage.sync.get(['name', 'value'], function(items) {
         var name = $('#addName').val(); 
         var value = $('#addValue').val(); 
-        chrome.storage.sync.set({'name':name});
-        chrome.storage.sync.set({'value':value});
+        chrome.storage.sync.set( {'name':name}); 
+        chrome.storage.sync.set( {'value':value}); 
                 $('#name').text(name); 
                 $('#value').text(value); 
             })
+    $('#enable').click(function () {
+        chrome.runtime.sendMessage({
+                headerName: $('#name').html(),
+                headerValue: $('#value').html()
+        }); 
     }); 
-
+}); 
