@@ -56,6 +56,12 @@ $(function () {
     }); 
     
     $(document).on('click', '#headerTable tbody tr td button.enable', function(event) {
+        //use attr to convert id and class to disable
+        // var buttonId = event.target.id;
+        // console.log('buttonId: ', buttonId);
+        // var IndexOfButtonNumericOrder = event.target.id.lastIndexOf('e') +1;
+        // console.log('buttonNumericOrderIndex:', IndexOfButtonNumericOrder);
+        // var buttonNumericOrder = event.target.id.substring(IndexOfButtonNumericOrder, buttonId.length);
         var headerName = $(this).closest('tr').find('.nameClass').html(); 
         var headerValue = $(this).closest('tr').find('.valueClass').html();
         var header = {
@@ -108,5 +114,26 @@ $(function () {
         chrome.storage.sync.clear();
         $('#tbody').empty()
     });
+    // $(document).on('click', '#headerTable tbody')
+
+    function disableHeader(buttonId){
+        var headerName = $('#'+buttonId).closest('tr').find('.nameClass').html();
+        var headerValue = $('#'+buttonId).closest('tr').find('.valueClass').html();
+        google.storage.sync.get({enabledHeaders:[]},function(result){
+            var enabledHeaders = result.enabledHeaders;
+            for(var i = 0; i < enabledHeaders.length; i++){
+                if(enabledHeaders.name === headerName && enabledHeaders.value === headerValue){
+                    enabledHeaders.splice(i, 1);
+                    chrome.storage.sync.set({enabledHeaders:enabledHeaders}, function(){
+                        chrome.storage.sync.get({enabledHeaders:[]}, function(){
+                            for(var i = 0; i < enabledHeaders.length; i++){
+                                console.log('enabledHeaders['+i+'].name: ',enabledHeaders[i].name, 'enabledHeaders['+i+'].value: ', enabledHeaders[i].value)
+                            }
+                        })
+                    })
+                }
+            }
+        })
+    }
 }); 
 
