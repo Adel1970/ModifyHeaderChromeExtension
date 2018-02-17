@@ -14,7 +14,7 @@ $(function () {
         headersLoop:
         for (var i = 0; i < headers.length; i++) {
             console.log('headers[' + i + '].name: ', headers[i].name, ' headers[' + i + '].value: ', headers[i].value)
-            $('#headerTable tr:last').after(
+            $('#headerTable tbody tr:last').after(
                 '<tr>' + 
                 '<td class="headerName" id="name' + i + '">' + headers[i].name + '</td>' + 
                 '<td class="headerValue" id="value' + i + '">' + headers[i].value + '</td>' + 
@@ -67,7 +67,7 @@ $(function () {
                 'value':headerValue
             }
             headers.push(header); 
-            $('#headerTable tr:last').after
+            $('#headerTable tbody tr:last').after
             (
                 '<tr>' + 
                 '<td class="headerName">' + headerName + '</td>' + 
@@ -154,7 +154,7 @@ $(function () {
     $(document).on('click', '#headerTable tfoot tr td button.clearHeaders', function(event){
         console.log('clear function was called'); 
         chrome.storage.sync.clear();
-        $('#tbody').empty()
+        $('#tbody').html("<tr></tr>");
     });
 
     $(document).on('click', '#headerTable tbody tr td button.disable', function(event) {
