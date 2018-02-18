@@ -2,12 +2,14 @@ $(function () {
     var enabledHeaders = [];
     chrome.storage.sync.get({enabledHeaders:[]},function(result){
         enabledHeaders = result.enabledHeaders;
+        chrome.browserAction.setBadgeText({"text":enabledHeaders.length.toString()});
         for(var i = 0; i<enabledHeaders.length; i++){
             console.log('headerName['+i+']: ' + enabledHeaders[i].name, ' headerValue['+i+']: ' + enabledHeaders[i].value); 
         }
     });
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         enabledHeaders = request.enabledHeaders;
+        chrome.browserAction.setBadgeText({"text":enabledHeaders.length.toString()});
         for(var i = 0; i<enabledHeaders.length; i++){
         console.log('headerName['+i+']: ' + enabledHeaders[i].name, ' headerValue['+i+']: ' + enabledHeaders[i].value); 
         }
