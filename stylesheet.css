@@ -1,3 +1,9 @@
+.disabled{
+    background-color: #EB9999
+}
+.enabled{
+    background-color: #00FA9A
+}
 .error{
     color:red;
     animation-name: fadeOut;

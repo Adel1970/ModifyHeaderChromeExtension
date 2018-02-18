@@ -22,6 +22,10 @@ $(function () {
                 '<td><button class="remove" id="remove' + i + '" type="button">remove</button></td>' + 
                 '</tr>'
             ); 
+            if(enabledHeaders.length === 0){//BAD SOLUTION, MUST BE CHANGED!
+                $('#name'+i).addClass('disabled');
+                $('#value'+i).addClass('disabled');
+            }
             enabledHeadersLoop: 
             for(var j = 0; j<enabledHeaders.length; j++){     
                 console.log('Entered enabledHeadersLoop \n',
@@ -35,16 +39,16 @@ $(function () {
                         "class":"disable"
                     });
                     document.getElementById('disable'+i).childNodes[0].nodeValue = 'disable';
-                    $('#name'+i).css({"background-color": "#00FA9A"});
-                    $('#value'+i).css({"background-color": "#00FA9A"});
+                    $('#name'+i).addClass('enabled');
+                    $('#value'+i).addClass('enabled');
                     break enabledHeadersLoop;
                 }
                 else{
                     while(j < enabledHeaders.length){
                         if(j === enabledHeaders.length - 1){
                             console.log('Header is not enabled ___ CHANGING ATTRIBUTES...');
-                            $('#name'+i).css({"background-color": "#EB9999"});
-                            $('#value'+i).css({"background-color":"#EB9999"});
+                            $('#name'+i).addClass('disabled');
+                            $('#value'+i).addClass('disabled');
                             break enabledHeadersLoop;
                         }
                         else{
@@ -129,8 +133,8 @@ $(function () {
                enabledHeaders: enabledHeaders
             }); 
         }); 
-        $(this).closest('tr').find('.headerName').css({"background-color": "#00FA9A"});
-        $(this).closest('tr').find('.headerValue').css({"background-color": "#00FA9A"}); 
+        $(this).closest('tr').find('.headerName').removeClass('disabled').addClass('enabled');
+        $(this).closest('tr').find('.headerValue').removeClass('disabled').addClass('enabled');
     }); 
 
     $(document).on('click', '#headerTable tbody tr td button.remove', function(event) {
@@ -177,8 +181,8 @@ $(function () {
         var newClass = $(this).attr("class");
         console.log('new ID for disable: '+newId+ '| new class for disable: '+newClass, '| changedID: '+changedID);
         disableHeader(newId);
-        $('#'+newId).closest('tr').find('.headerName').css({"background-color":"#EB9999"});
-        $('#'+newId).closest('tr').find('.headerValue').css({"background-color":"#EB9999"});
+        $('#'+newId).closest('tr').find('.headerName').removeClass('enabled').addClass('disabled');
+        $('#'+newId).closest('tr').find('.headerValue').removeClass('enabled').addClass('disabled');
         document.getElementById(newId).childNodes[0].nodeValue = 'enable';
     });
 
