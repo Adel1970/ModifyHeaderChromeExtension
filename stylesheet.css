@@ -1,0 +1,11 @@
+.error{
+    color:red;
+    animation-name: fadeOut;
+    animation-delay: 3ms;
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+}
+@keyframes fadeOut{
+    from {opacity: 1;}
+    to {opacity: 0;}
+}

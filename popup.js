@@ -61,7 +61,14 @@ $(function () {
         var headerName = $('#addName').val(); 
         var headerValue = $('#addValue').val(); 
         chrome.storage.sync.get( {headers:[]}, function(result) {
-            var headers = result.headers; 
+            var headers = result.headers
+            for(var i = 0; i<headers.length; i++){
+                if (headers[i].name === headerName && headers[i].value === headerValue){
+                    $('#addValue').after('<span class= "error">header already exists</span>');
+                    setTimeout(function(){$('span.error').remove();}, 3000);
+                    return;
+                }
+            } 
             var header =  {
                 'name':headerName, 
                 'value':headerValue
@@ -207,6 +214,6 @@ $(function () {
                 }
             }
         });
-    }
+    } 
 }); 
 
