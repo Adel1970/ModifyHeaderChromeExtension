@@ -1,9 +1,9 @@
 $(function () {
     /**
-     * Get all saved headers in one array and the enabled headers in another array.
-     * Loop through all headers, for each header, loop through all enabled headers.
-     * If the header is enabled, change the header attributes accordingly, otherwise continue looping through the enabled headers.
-     * If the end of the enabled headers array was reached, consider the header as disabled and change the attributes accordingly
+     * Gets all saved headers in one array and the enabled headers in another array.
+     * Loops through all headers, for each header, loop through all enabled headers.
+     * If the header is enabled, changes the header properties accordingly, otherwise continues looping through the enabled headers.
+     * If the end of the enabled headers array is reached, considers the header as disabled and changes the properties accordingly.
      */
     chrome.storage.sync.get({headers:[], enabledHeaders:[]}, function(result) {
         var headers = result.headers; 
@@ -14,7 +14,7 @@ $(function () {
         headersLoop:
         for (var i = 0; i < headers.length; i++) {
             console.log('headers[' + i + '].name: ', headers[i].name, ' headers[' + i + '].value: ', headers[i].value)
-            $('#headerTable tbody tr:last').after(
+            $('#headerTable tbody tr:last').after( //adds a new row to the header table with corresponding values
                 '<tr>' + 
                 '<td class="headerName" id="name' + i + '">' + headers[i].name + '</td>' + 
                 '<td class="headerValue" id="value' + i + '">' + headers[i].value + '</td>' + 
@@ -28,13 +28,13 @@ $(function () {
             }
             enabledHeadersLoop: 
             for(var j = 0; j<enabledHeaders.length; j++){     
-                console.log('Entered enabledHeadersLoop \n',
+                console.log('Entered enabledHeadersLoop \n',//just for debugging, must be omitted
                                 'headers['+i+'].name: ', headers[i].name,'headers['+i+'].value: ', headers[i].value,'\n',
                                 'enabledHeaders['+j+'].name: ', enabledHeaders[j].name,
                                 'enabledHeaders['+j+'].value: ', enabledHeaders[j].value)
                 if(headers[i].name === enabledHeaders[j].name && headers[i].value === enabledHeaders[j].value){
-                    console.log('Header is enabled ___ CHANGING ATTRIBUTES...');
-                    $('#enable'+i).attr({
+                    console.log('Header is enabled ___ CHANGING PROPERTIES...');
+                    $('#enable'+i).prop({
                         "id":"disable"+i,
                         "class":"disable"
                     });
@@ -46,7 +46,7 @@ $(function () {
                 else{
                     while(j < enabledHeaders.length){
                         if(j === enabledHeaders.length - 1){
-                            console.log('Header is not enabled ___ CHANGING ATTRIBUTES...');
+                            console.log('Header is not enabled ___ CHANGING PROPERTIES...');
                             $('#name'+i).addClass('disabled');
                             $('#value'+i).addClass('disabled');
                             break enabledHeadersLoop;
@@ -61,6 +61,11 @@ $(function () {
             }   
         }
     }); 
+    /**
+     * Gets all saved headers 
+     * If any header has the same name and value as headername & headervalue, returns undefined. 
+     * Otherwise adds the new header to the headers array, and saves it in chrome storage.
+     */
     $('#addHeader').click(function () {
         var headerName = $('#addName').val(); 
         var headerValue = $('#addValue').val(); 
@@ -78,7 +83,7 @@ $(function () {
                 'value':headerValue
             }
             headers.splice(headers.length, 0, header); 
-            $('#headerTable tbody tr:last').after
+            $('#headerTable tbody tr:last').after //adds a new row to the header table with corresponding values
             (
                 '<tr>' + 
                 '<td class="headerName">' + headerName + '</td>' + 
@@ -87,18 +92,21 @@ $(function () {
                 '<td><button class="remove" id = "remove'+(headers.length-1)+'"type="button">remove</button></td>' + 
                 '</tr>'
             ); 
-            var id = $('#enable'+(headers.length-1)).attr('id');
+            var id = $('#enable'+(headers.length-1)).prop('id');
             console.log('Id: ', id);
             chrome.storage.sync.set( {headers:headers}, function() {
-                chrome.storage.sync.get( {headers:[]}, function(result) {//just for testing, must be omitted
-                    for (var i = 0; i < headers.length; i++) {//just for testing, must be omitted
-                        console.log('headers[' + i + '].name: ', headers[i].name, ' headers[' + i + '].value: ', headers[i].value)//just for testing, must be omitted
+                chrome.storage.sync.get( {headers:[]}, function(result) {//just for debugging, must be omitted
+                    for (var i = 0; i < headers.length; i++) {//just for debugging, must be omitted
+                        console.log('headers[' + i + '].name: ', headers[i].name, ' headers[' + i + '].value: ', headers[i].value)//just for debugging, must be omitted
                     }
                 }); 
             }); 
         }); 
     }); 
-    
+    /**
+    * Gets all enabled headers.
+    * Adds the new enabled header to the enabled headers array and saves it back into chrome storage. 
+    */	
     $(document).on('click', '#headerTable tbody tr td button.enable', function(event) {
         //convert button's id and class to 'disable'
         var id = event.target.id;
@@ -106,14 +114,13 @@ $(function () {
         var buttonNumericOrder = id.substring(indexOfButtonNumericOrder, id.length);
         var newId = "disable"+buttonNumericOrder;
         console.log('id: ', id, 'indexOfButtonNumericOrder: ', indexOfButtonNumericOrder, 'buttonNumericOrder for enable: ',buttonNumericOrder )
-        $(this).attr({
+        $(this).prop({
             "id": newId,
             "class": "disable",
         });
-        var changedID = $(this).attr('id');
-        var newClass = $(this).attr('class');
-        console.log('newId for enable: ', newId, '| newClass for enable: ', newClass, 'changedId: ', changedID);
-        document.getElementById(newId).childNodes[0].nodeValue = 'disable'; //faster than $(this).text(), $(this).html() and document.getElementById(newId).innerHTML
+        var newClass = $(this).prop('class');
+        console.log('newId for enable: ', newId, '| newClass for enable: ', newClass);
+        document.getElementById(newId).childNodes[0].nodeValue = 'disable'; //faster than $(this).text(), $(this).html() and document.getElementById(newId).innerHTML (tested in jsFiddle)
         var headerName = $(this).closest('tr').find('.headerName').html(); 
         var headerValue = $(this).closest('tr').find('.headerValue').html();
         var header = {
@@ -122,12 +129,12 @@ $(function () {
         }
         chrome.storage.sync.get({enabledHeaders:[]}, function(result){
             var enabledHeaders = result.enabledHeaders;
-            enabledHeaders.push(header);
+            enabledHeaders.splice(enabledHeaders.length, 0, header);
             chrome.storage.sync.set({enabledHeaders:enabledHeaders}, function(){
                 chrome.storage.sync.get({enabledHeaders:[]}, function(result){
-                    for(var i = 0; i<result.enabledHeaders.length; i++){
-                        console.log('enabledHeaders['+i+'].name: ', enabledHeaders[i].name, 
-                                    ' enabledHeaders['+i+'].name: ', enabledHeaders[i].value);
+                    for(var i = 0; i<result.enabledHeaders.length; i++){//just for debugging, must be omitted
+                        console.log('enabledHeaders['+i+'].name: ', enabledHeaders[i].name, //just for debugging, must be omitted
+                                    ' enabledHeaders['+i+'].name: ', enabledHeaders[i].value);//just for debugging, must be omitted
                     }
                 });
             }); 
@@ -138,7 +145,13 @@ $(function () {
         $(this).closest('tr').find('.headerName').removeClass('disabled').addClass('enabled');
         $(this).closest('tr').find('.headerValue').removeClass('disabled').addClass('enabled');
     }); 
-
+    /**
+     * Removes the header from enabledHeaders array (if it's saved there) by calling disableHeader() .
+     * Finds header's name and value that are in the same row of the remove button.
+     * Gets the saved headers. 
+     * Removes the first found header that has the same name and value in the remove button's row.  
+     * Saves the headers array back into chrome storage. 
+     */
     $(document).on('click', '#headerTable tbody tr td button.remove', function(event) {
         var buttonId = event.target.id;
         disableHeader(buttonId);
@@ -151,11 +164,11 @@ $(function () {
                 if (headers[i].name === headerName && headers[i].value === headerValue) {                   
                     headers.splice(i,1);
                     chrome.storage.sync.set({headers:headers}, function(){
-                        chrome.storage.sync.get({headers:[]}, function(result) {//just for testing, must be omitted
-                            for (var i = 0; i < result.headers.length; i++) {
+                        chrome.storage.sync.get({headers:[]}, function(result) {//just for debugging, must be omitted
+                            for (var i = 0; i < result.headers.length; i++) {//just for debugging, must be omitted
                                 console.log('headers[' + i + '].name: ', headers[i].name, 'headers[' + i + '].value: ', headers[i].value)
                             }
-                            console.log('headers array length after removing elements: ', result.headers.length)//just for testing, must be omitted
+                            console.log('headers array length after removing elements: ', result.headers.length)//just for debugging, must be omitted
                         });
                     });
                     break FindHeaderToRemoveLoop;  
@@ -164,6 +177,11 @@ $(function () {
         }); 
         $(this).closest('tr').remove(); 
     }); 
+
+    /**
+     * Deletes all headers & enabledHeaders from chrome storage.
+     * Chrome.storage.sync.clear() will also work, but it cannot be used here, since there is another urls array (In progress, not merged in master branch yet) that must be deleted separately from headers & enabledHeaders arrays (clear() will delete everything).
+     */
     $(document).on('click', '#headerTable tfoot tr td button.clearHeaders', function(event){
         console.log('clear function was called'); 
         chrome.storage.sync.get({headers:[], enabledHeaders: []},function(result){
@@ -181,26 +199,36 @@ $(function () {
         $('#tbody').html("<tr></tr>");
     });
 
+    /**
+     * Changes the id and class of the button to enable. 
+     * Calls disableHeader to actually disable the header.
+     * Changes the class of the relative row to disabled(for css).
+     */
     $(document).on('click', '#headerTable tbody tr td button.disable', function(event) {
-        //convert button's id and class to 'enable'
         var id = event.target.id;
         var indexOfButtonNumericOrder = id.lastIndexOf('e') + 1;
         var buttonNumericOrder = id.substring(indexOfButtonNumericOrder, id.length);
         console.log('id: ', id, 'indexOfButtonNumericOrder: ', indexOfButtonNumericOrder,'buttonNumericOrder for disable: ', buttonNumericOrder); 
         var newId = "enable"+buttonNumericOrder;
-        $(this).attr({
+        $(this).prop({
             "id": newId,
             "class":"enable"
         });
-        var changedID = $(this).attr('id');
-        var newClass = $(this).attr("class");
-        console.log('new ID for disable: '+newId+ '| new class for disable: '+newClass, '| changedID: '+changedID);
+        var newClass = $(this).prop("class");//just for debugging, must be omitted
+        console.log('new ID for disable: '+newId+ '| new class for disable: '+newClass);//just for debugging, must be omitted
         disableHeader(newId);
         $('#'+newId).closest('tr').find('.headerName').removeClass('enabled').addClass('disabled');
         $('#'+newId).closest('tr').find('.headerValue').removeClass('enabled').addClass('disabled');
         document.getElementById(newId).childNodes[0].nodeValue = 'enable';
     });
 
+    /**
+     * Same logic as for remove header.
+     * Gets saved enabled headers from chrome storage. 
+     * Removes the first found enabled header that has the same name and value as the header to be removed.
+     * Saves the enabled headers array in chrome storage.
+     * @param {*} buttonId 
+     */
     function disableHeader(buttonId){
         var headerName = $('#'+buttonId).closest('tr').find('.headerName').html();
         var headerValue = $('#'+buttonId).closest('tr').find('.headerValue').html();
@@ -209,7 +237,7 @@ $(function () {
             var enabledHeaders = result.enabledHeaders;
             FindHeaderToDisableLoop:
             for(var i = 0; i < enabledHeaders.length; i++){
-                console.log('Looping through enabledHeaders...','\n',
+                console.log('Looping through enabledHeaders...','\n',//just for debugging, must be omitted
                             'enabledHeaders['+i+'].name: ',enabledHeaders[i].name,'\n',
                             'enabledHeaders['+i+'].value: ', enabledHeaders[i].value);
                 if(enabledHeaders[i].name === headerName && enabledHeaders[i].value === headerValue){
@@ -218,7 +246,7 @@ $(function () {
                                 'removing element...');
                     enabledHeaders.splice(i, 1);
                     chrome.storage.sync.set({enabledHeaders:enabledHeaders}, function(){
-                        chrome.storage.sync.get({enabledHeaders:[]}, function(result){
+                        chrome.storage.sync.get({enabledHeaders:[]}, function(result){//just for debugging, must be omitted
                             for(var i = 0; i < result.enabledHeaders.length; i++){
                                 console.log('Element was removed, looping through enabledHeaders...','\n',
                                             'enabledHeaders['+i+'].name: ',enabledHeaders[i].name,'\n',
