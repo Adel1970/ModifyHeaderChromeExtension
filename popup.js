@@ -22,7 +22,7 @@ $(function () {
                 '<td><button class="remove" id="remove' + i + '" type="button">remove</button></td>' + 
                 '</tr>'
             ); 
-            if(enabledHeaders.length === 0){//BAD SOLUTION, MUST BE CHANGED!
+            if(enabledHeaders.length === 0){
                 $('#name'+i).addClass('disabled');
                 $('#value'+i).addClass('disabled');
             }
@@ -77,7 +77,7 @@ $(function () {
                 'name':headerName, 
                 'value':headerValue
             }
-            headers.push(header); 
+            headers.splice(headers.length, 0, header); 
             $('#headerTable tbody tr:last').after
             (
                 '<tr>' + 
@@ -101,9 +101,11 @@ $(function () {
     
     $(document).on('click', '#headerTable tbody tr td button.enable', function(event) {
         //convert button's id and class to 'disable'
-        var buttonNumericOrder = event.target.id.slice(-1);
+        var id = event.target.id;
+        var indexOfButtonNumericOrder = id.lastIndexOf('e')+1;
+        var buttonNumericOrder = id.substring(indexOfButtonNumericOrder, id.length);
         var newId = "disable"+buttonNumericOrder;
-        console.log('buttonNumericOrder for enable: ',buttonNumericOrder )
+        console.log('id: ', id, 'indexOfButtonNumericOrder: ', indexOfButtonNumericOrder, 'buttonNumericOrder for enable: ',buttonNumericOrder )
         $(this).attr({
             "id": newId,
             "class": "disable",
@@ -164,14 +166,27 @@ $(function () {
     }); 
     $(document).on('click', '#headerTable tfoot tr td button.clearHeaders', function(event){
         console.log('clear function was called'); 
-        chrome.storage.sync.clear();
+        chrome.storage.sync.get({headers:[], enabledHeaders: []},function(result){
+            var headers = result.headers;
+            var enabledHeaders = result.enabledHeaders;
+
+            headers.splice(0,headers.length);
+            enabledHeaders.splice(0, enabledHeaders.length);
+            chrome.storage.sync.set({enabledHeaders: enabledHeaders, headers: headers}, function(){
+                chrome.storage.sync.get({headers:[], enabledHeaders: []}, function(result){
+                    console.log('headers.length: ', result.headers.length,'enabledHeaders.length: ', result.enabledHeaders.length)
+                })
+            })
+        })
         $('#tbody').html("<tr></tr>");
     });
 
     $(document).on('click', '#headerTable tbody tr td button.disable', function(event) {
         //convert button's id and class to 'enable'
-        var buttonNumericOrder = event.target.id.slice(-1);
-        console.log('buttonNumericOrder for disable: ', buttonNumericOrder); 
+        var id = event.target.id;
+        var indexOfButtonNumericOrder = id.lastIndexOf('e') + 1;
+        var buttonNumericOrder = id.substring(indexOfButtonNumericOrder, id.length);
+        console.log('id: ', id, 'indexOfButtonNumericOrder: ', indexOfButtonNumericOrder,'buttonNumericOrder for disable: ', buttonNumericOrder); 
         var newId = "enable"+buttonNumericOrder;
         $(this).attr({
             "id": newId,
